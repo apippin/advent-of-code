@@ -61,46 +61,17 @@ aoc_helper.lazy_test(day=1, year=2023, parse=parse_raw, solution=part_one)
 def part_two(data=data):
     sum = 0
     for line in data:
-        orig_line = line
-        #print(f"org line: {line}")
-        number_words = ["one","two","three","four","five","six","seven","eight","nine"]
-        chars = ''
-        # Find the first digit
-        for char in line:
-            if char.isnumeric():
-                break
-            chars += char
-            #print(f"char: {char} chars: {chars}")
-            for n in number_words:
-                if chars.find(n) != -1:
-                    number = w2n.word_to_num(n)
-                    #print(f"found number: {number}")
-                    line = line.replace(chars,str(number))
-                    chars = ''
-            if not chars:
-                break
-        # Find the last digit
-        chars = ''
-        for char in reversed(line):
-            if char.isnumeric():
-                break
-            chars = char + chars
-            #print(f"char: {char} chars: {chars}")
-            for n in number_words:
-                if chars.find(n) != -1:
-                    number = w2n.word_to_num(n)
-                    #print(f"found number: {number}")
-                    line = line.replace(chars,str(number))
-                    chars = ''
-            if not chars:
-                break
-        #print(f"new line: {line}")
-        numbers = re.findall(r'(\d)', line)
-        if len(numbers) == 1:
-            numbers.append(numbers[0])
-        number = f"{numbers[0]}{numbers[-1]}"
+        match = re.search(r'(\d|one|two|three|four|five|six|seven|eight|nine)', line)
+        first = match.group(0)
+        match = re.search(r'.*(\d|one|two|three|four|five|six|seven|eight|nine)', line)
+        last = match.group(1)
+        if not first.isnumeric():
+            first = w2n.word_to_num(first)
+        if not last.isnumeric():
+            last = w2n.word_to_num(last)
+        number = f"{first}{last}"
         sum += int(number)
-        #print(f"orig_line: {orig_line} line: {line} numbers: {numbers} number: {number} sum: {sum}")
+        #print(f"line: {line} number: {number} sum: {sum}")
     print(f"corrected calibration sum: {sum}")
     return sum
 
