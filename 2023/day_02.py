@@ -6,12 +6,17 @@ import re
 import operator
 from functools import reduce
 
+# What day and year is this solution for?
+day = 2
+year = 2023
+
+# Game globals
 max_cubes = { "red": 12, "green": 13, "blue": 14 }
 
 # Sample game data:
 # Game 1: 4 green, 2 blue; 1 red, 1 blue, 4 green; 3 green, 4 blue, 1 red; 7 green, 2 blue, 4 red; 3 red, 7 green; 3 red, 3 green
 # Game 2: 1 blue, 11 red, 1 green; 3 blue, 2 red, 4 green; 11 red, 2 green, 2 blue; 13 green, 5 red, 1 blue; 4 green, 8 red, 3 blue
-raw = aoc_helper.fetch(2, 2023)
+raw = aoc_helper.fetch(day, year)
 
 # Parse the game data into a list of tuples where the max of each color of cube is stored per game
 def parse_raw(raw: str):
@@ -47,9 +52,9 @@ def part_two(data=data):
     return sum_game_cube_powers
 
 # Check that the test data then full data works for part_one
-aoc_helper.lazy_test(day=2, year=2023, parse=parse_raw, solution=part_one)
-aoc_helper.lazy_submit(day=2, year=2023, solution=part_one, data=data)
+aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_one)
+aoc_helper.lazy_submit(day=day, year=year, solution=part_one, data=data)
 
 # Check that the test data then full data works for part_two
-aoc_helper.lazy_test(day=2, year=2023, parse=parse_raw, solution=part_two)
-aoc_helper.lazy_submit(day=2, year=2023, solution=part_two, data=data)
+aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_two)
+aoc_helper.lazy_submit(day=day, year=year, solution=part_two, data=data)
