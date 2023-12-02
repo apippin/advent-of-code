@@ -2,42 +2,29 @@ from collections import defaultdict, deque
 from typing import TYPE_CHECKING
 
 import aoc_helper
-from aoc_helper import (
-    Grid,
-    PrioQueue,
-    SparseGrid,
-    decode_text,
-    extract_ints,
-    extract_iranges,
-    extract_ranges,
-    extract_uints,
-    frange,
-    irange,
-    iter,
-    list,
-    map,
-    range,
-    search,
-    tail_call,
-)
-
 import re
 from word2number import w2n
 
-raw = aoc_helper.fetch(1, 2023)
+# What day and year is this solution for?
+day = 1
+year = 2023
 
+# Sample game data:
+# 1abc2
+# pqr3stu8vwx
+# a1b2c3d4e5f
+# treb7uchet
+raw = aoc_helper.fetch(1, 2023)
 
 def parse_raw(raw: str):
     lines = raw.splitlines()
     return lines
 
-
 data = parse_raw(raw)
 
-
-# providing this default is somewhat of a hack - there isn't any other way to
-# force type inference to happen, AFAIK - but this won't work with standard
-# collections (list, set, dict, tuple)
+# On each line, the calibration value can be found by combining the first digit and 
+# the last digit (in that order) to form a single two-digit number.
+# What is the sum of all of the calibration values?
 def part_one(data=data):
     sum = 0
     for line in data:
@@ -49,15 +36,11 @@ def part_one(data=data):
         #print(f"line: {line} numbers: {numbers} number: {number} sum: {sum}")
     print(f"calibration sum: {sum}")
     return sum
-        
 
-
-aoc_helper.lazy_test(day=1, year=2023, parse=parse_raw, solution=part_one)
-
-
-# providing this default is somewhat of a hack - there isn't any other way to
-# force type inference to happen, AFAIK - but this won't work with standard
-# collections (list, set, dict, tuple)
+# It looks like some of the digits are actually spelled out with letters: 
+# one, two, three, four, five, six, seven, eight, and nine also count as valid "digits".
+# Equipped with this new information, you now need to find the real first and last digit on each line.
+# What is the sum of all of the calibration values?
 def part_two(data=data):
     sum = 0
     for line in data:
@@ -75,9 +58,10 @@ def part_two(data=data):
     print(f"corrected calibration sum: {sum}")
     return sum
 
-#part_two(data)
+# Check that the test data then full data works for part_one
+aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_one)
+aoc_helper.lazy_submit(day=day, year=year, solution=part_one, data=data)
 
-aoc_helper.lazy_test(day=1, year=2023, parse=parse_raw, solution=part_two)
-
-aoc_helper.lazy_submit(day=1, year=2023, solution=part_one, data=data)
-aoc_helper.lazy_submit(day=1, year=2023, solution=part_two, data=data)
+# Check that the test data then full data works for part_two
+aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_two)
+aoc_helper.lazy_submit(day=day, year=year, solution=part_two, data=data)
