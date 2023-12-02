@@ -25,69 +25,48 @@ import re
 import operator
 from functools import reduce
 
-from collections import defaultdict
-def nested_dict(n, type):
-    if n == 1:
-        return defaultdict(type)
-    else:
-        return defaultdict(lambda: nested_dict(n-1, type))
-
 max_cubes = { "red": 12, "green": 13, "blue": 14 }
 
 raw = aoc_helper.fetch(2, 2023)
 
+# Sample game data:
+# Game 1: 4 green, 2 blue; 1 red, 1 blue, 4 green; 3 green, 4 blue, 1 red; 7 green, 2 blue, 4 red; 3 red, 7 green; 3 red, 3 green
+# Game 2: 1 blue, 11 red, 1 green; 3 blue, 2 red, 4 green; 11 red, 2 green, 2 blue; 13 green, 5 red, 1 blue; 4 green, 8 red, 3 blue
+
+# Parse the game data into a list of tuples where the max of each color of cube is stored per game
 def parse_raw(raw: str):
     lines = raw.splitlines()
-    data = nested_dict(3, int)
-    for line in lines:
-        match = re.search(r"Game (\d+):", line)
-        game = int(match.group(1))
-        line = line.replace(f"Game {game}: ","")
-        game_sets = line.split(";")
-        for set_num, game_set in enumerate(game_sets):
-            cubes = game_set.split(",")
-            for cube in cubes:
-                match = re.search(r"(\d+) (\w+)", cube)
-                data[game][set_num][match.group(2)] = int(match.group(1))
+    data = list()
+    for game, line in enumerate(lines,1):
+        red = list(map(int, re.findall(r"(\d+) red", line)))
+        green = list(map(int, re.findall(r"(\d+) green", line)))
+        blue = list(map(int, re.findall(r"(\d+) blue", line)))
+        data.append((max(red), max(green), max(blue)))
     return data
 
 data = parse_raw(raw)
 
-
-# providing this default is somewhat of a hack - there isn't any other way to
-# force type inference to happen, AFAIK - but this won't work with standard
-# collections (list, set, dict, tuple)
+# Determine which games would have been possible if the bag had been loaded with only 
+# 12 red cubes, 13 green cubes, and 14 blue cubes. 
+# What is the sum of the IDs of those games?
 def part_one(data=data):
     sum_game_ids = 0
-    for game in data.keys():
-        game_possible=True
-        for set_num in data[game].keys():
-            for color in data[game][set_num].keys():
-                print(f"game: {game} set: {set_num} color: {color} num: {data[game][set_num][color]}")
-                if data[game][set_num][color] > max_cubes[color]:
-                    game_possible=False
-        if game_possible:
-            sum_game_ids += game
+    for game_id, game in enumerate(data,1):
+        if game[0] <= max_cubes["red"] and game[1] <= max_cubes["green"] and game[2] <= max_cubes["blue"]:
+            sum_game_ids += game_id
+    print(f"sum_game_ids: {sum_game_ids}")
     return sum_game_ids
 
 aoc_helper.lazy_test(day=2, year=2023, parse=parse_raw, solution=part_one)
 
-
-# providing this default is somewhat of a hack - there isn't any other way to
-# force type inference to happen, AFAIK - but this won't work with standard
-# collections (list, set, dict, tuple)
+# For each game, find the minimum set of cubes that must have been present. 
+# What is the sum of the power of these sets?
 def part_two(data=data):
     sum_game_cube_powers = 0
-    for game in data.keys():
-        game_min_cubes = { "red": 0, "green": 0, "blue": 0 }
-        for set_num in data[game].keys():
-            for color in data[game][set_num].keys():
-                print(f"game: {game} set: {set_num} color: {color} num: {data[game][set_num][color]}")
-                if data[game][set_num][color] > game_min_cubes[color]:
-                    game_min_cubes[color] = data[game][set_num][color]
-        sum_game_cube_powers += reduce(operator.mul, list(game_min_cubes.values()), 1)
+    for game_id, game in enumerate(data,1):
+        sum_game_cube_powers += reduce(operator.mul, game, 1)
+    print(f"sum_game_cube_powers: {sum_game_cube_powers}")
     return sum_game_cube_powers
-
 
 aoc_helper.lazy_test(day=2, year=2023, parse=parse_raw, solution=part_two)
 
