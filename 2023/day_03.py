@@ -2,9 +2,6 @@ from collections import defaultdict, deque
 from typing import TYPE_CHECKING
 import aoc_helper
 
-#import re
-#import operator
-#from functools import reduce
 import numpy as np
 
 # What day and year is this solution for?
