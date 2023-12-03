@@ -31,8 +31,8 @@ def parse_raw(raw: str):
 
 data = parse_raw(raw)
 
-# Determine which games would have been possible if the bag had been loaded with only 
-# 12 red cubes, 13 green cubes, and 14 blue cubes. 
+# Determine which games would have been possible if the bag had been loaded with only
+# 12 red cubes, 13 green cubes, and 14 blue cubes.
 # What is the sum of the IDs of those games?
 def part_one(data=data):
     sum_game_ids = 0
@@ -42,7 +42,7 @@ def part_one(data=data):
     print(f"sum_game_ids: {sum_game_ids}")
     return sum_game_ids
 
-# For each game, find the minimum set of cubes that must have been present. 
+# For each game, find the minimum set of cubes that must have been present.
 # What is the sum of the power of these sets?
 def part_two(data=data):
     sum_game_cube_powers = 0

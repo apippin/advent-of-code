@@ -22,7 +22,7 @@ def parse_raw(raw: str):
 
 data = parse_raw(raw)
 
-# On each line, the calibration value can be found by combining the first digit and 
+# On each line, the calibration value can be found by combining the first digit and
 # the last digit (in that order) to form a single two-digit number.
 # What is the sum of all of the calibration values?
 def part_one(data=data):
@@ -37,7 +37,7 @@ def part_one(data=data):
     print(f"calibration sum: {sum}")
     return sum
 
-# It looks like some of the digits are actually spelled out with letters: 
+# It looks like some of the digits are actually spelled out with letters:
 # one, two, three, four, five, six, seven, eight, and nine also count as valid "digits".
 # Equipped with this new information, you now need to find the real first and last digit on each line.
 # What is the sum of all of the calibration values?

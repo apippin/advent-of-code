@@ -2,9 +2,10 @@ from collections import defaultdict, deque
 from typing import TYPE_CHECKING
 import aoc_helper
 
-import re
-import operator
-from functools import reduce
+#import re
+#import operator
+#from functools import reduce
+import numpy as np
 
 # What day and year is this solution for?
 day = 3
@@ -57,7 +58,7 @@ def next_col(data, col: int):
         return col+1
     return col
 
-# In this schematic, two numbers are not part numbers because they are not adjacent to a symbol: 
+# In this schematic, two numbers are not part numbers because they are not adjacent to a symbol:
 # 114 (top right) and 58 (middle right). Every other number is adjacent to a symbol and so is a part number; their sum is 4361.
 # Of course, the actual engine schematic is much larger. What is the sum of all of the part numbers in the engine schematic?
 def part_one(data=data):
@@ -82,12 +83,12 @@ def part_one(data=data):
                     found_part_num = True
             else:
                 if found_part_num:
-                    print(f"data[{row}][{col}] = {int(part_num)}")
+                    #print(f"data[{row}][{col}] = {int(part_num)}")
                     sum_of_part_numbers += int(part_num)
                 found_part_num = False
                 part_num = ""
         if found_part_num:
-            print(f"data[{row}][{col}] = {int(part_num)}")
+            #print(f"data[{row}][{col}] = {int(part_num)}")
             sum_of_part_numbers += int(part_num)
             found_part_num = False
             part_num = ""
@@ -95,9 +96,25 @@ def part_one(data=data):
     print(f"sum_of_part_numbers: {sum_of_part_numbers}")
     return sum_of_part_numbers
 
+def find_part_num(data, gear, num, row, col, left=True, right=True):
+    # Go left
+    if left:
+        for x in range(col,-1,-1):
+            if data[row][x].isnumeric():
+                gear[num] = data[row][x] + gear[num]
+            else:
+                break
+    # Go right
+    if right:
+        for x in range(col+1,len(data[row]),1):
+            if data[row][x].isnumeric():
+                gear[num] += data[row][x]
+            else:
+                break
+
 # This time, you need to find the gear ratio of every gear and add them all up so that the engineer can figure out which gear needs to be replaced.
-# In this schematic, there are two gears. The first is in the top left; it has part numbers 467 and 35, so its gear ratio is 16345. 
-# The second gear is in the lower right; its gear ratio is 451490. (The * adjacent to 617 is not a gear because it is only adjacent to one part number.) 
+# In this schematic, there are two gears. The first is in the top left; it has part numbers 467 and 35, so its gear ratio is 16345.
+# The second gear is in the lower right; its gear ratio is 451490. (The * adjacent to 617 is not a gear because it is only adjacent to one part number.)
 # Adding up all of the gear ratios produces 467835.
 # What is the sum of all of the gear ratios in your engine schematic?
 def part_two(data=data):
@@ -106,161 +123,68 @@ def part_two(data=data):
         for col,char in enumerate(line):
             if char == '*':
                 # Check if this '*' is adjacent to 2 part numbers
-                gear = [0 for i in range(8)]
+
+                # Create an array that can hold up to 8 gears, initalize each gear position to ''
+                gear = np.full(8, '', dtype='object')
 
                 # diagonal up left
-                num = 0 
                 if data[prev_row(data, row)][prev_col(data, col)].isnumeric():
-                    gear[num] = ""
-                    # Go left
-                    for x in range(prev_col(data, col),-1,-1):
-                        if data[prev_row(data, row)][x].isnumeric():
-                            gear[num] = data[prev_row(data, row)][x] + gear[num]
-                        else:
-                            break
-                    # Go right
-                    for x in range(prev_col(data, col)+1,len(data[row]),1):
-                        if data[prev_row(data, row)][x].isnumeric():
-                            gear[num] += data[prev_row(data, row)][x]
-                        else:
-                            break
+                    find_part_num(data, gear, 0, prev_row(data, row), prev_col(data, col))
 
                 # diagonal up right
-                num += 1
                 if data[prev_row(data, row)][next_col(data, col)].isnumeric():
-                    gear[num] = ""
-                    # Go left
-                    for x in range(next_col(data, col),-1,-1):
-                        if data[prev_row(data, row)][x].isnumeric():
-                            gear[num] = data[prev_row(data, row)][x] + gear[num]
-                        else:
-                            break
-                    # Go right
-                    for x in range(next_col(data, col)+1,len(data[row]),1):
-                        if data[prev_row(data, row)][x].isnumeric():
-                            gear[num] += data[prev_row(data, row)][x]
-                        else:
-                            break
+                    find_part_num(data, gear, 1, prev_row(data, row), next_col(data, col))
 
                 # up
-                num += 1
                 if data[prev_row(data, row)][col].isnumeric():
-                    gear[num] = ""
-                    # Go left
-                    for x in range(col,-1,-1):
-                        if data[prev_row(data, row)][x].isnumeric():
-                            gear[num] = data[prev_row(data, row)][x] + gear[num]
-                        else:
-                            break
-                    # Go right
-                    for x in range(col+1,len(data[row]),1):
-                        if data[prev_row(data, row)][x].isnumeric():
-                            gear[num] += data[prev_row(data, row)][x]
-                        else:
-                            break
+                    find_part_num(data, gear, 2, prev_row(data, row), col)
 
                 # You can't have the same number in all 3 positions
                 if gear[0] == gear[1] == gear[2]:
-                    gear[1] = 0
-                    gear[2] = 0
+                    gear[1] = ''
+                    gear[2] = ''
                 # You can't have the same number in down if you have either diagonal
                 elif gear[0] == gear[2] or gear[1] == gear[2]:
-                    gear[2] = 0
+                    gear[2] = ''
 
                 # diagonal down left
-                num += 1
                 if data[next_row(data, row)][prev_col(data, col)].isnumeric():
-                    gear[num] = ""
-                    # Go left
-                    for x in range(prev_col(data, col),-1,-1):
-                        if data[next_row(data, row)][x].isnumeric():
-                            gear[num] = data[next_row(data, row)][x] + gear[num]
-                        else:
-                            break
-                    # Go right
-                    for x in range(prev_col(data, col)+1,len(data[row]),1):
-                        if data[next_row(data, row)][x].isnumeric():
-                            gear[num] += data[next_row(data, row)][x]
-                        else:
-                            break
+                    find_part_num(data, gear, 3, next_row(data, row), prev_col(data, col))
 
                 # diagonal down right
-                num += 1
                 if data[next_row(data, row)][next_col(data, col)].isnumeric():
-                    gear[num] = ""
-                    # Go left
-                    for x in range(next_col(data, col),-1,-1):
-                        if data[next_row(data, row)][x].isnumeric():
-                            gear[num] = data[next_row(data, row)][x] + gear[num]
-                        else:
-                            break
-                    # Go right
-                    for x in range(next_col(data, col)+1,len(data[row]),1):
-                        if data[next_row(data, row)][x].isnumeric():
-                            gear[num] += data[next_row(data, row)][x]
-                        else:
-                            break
+                    find_part_num(data, gear, 4, next_row(data, row), next_col(data, col))
 
                 # down
-                num += 1
                 if data[next_row(data, row)][col].isnumeric():
-                    gear[num] = ""
-                    # Go left
-                    for x in range(col,-1,-1):
-                        if data[next_row(data, row)][x].isnumeric():
-                            gear[num] = data[next_row(data, row)][x] + gear[num]
-                        else:
-                            break
-                    # Go right
-                    for x in range(col+1,len(data[row]),1):
-                        if data[next_row(data, row)][x].isnumeric():
-                            gear[num] += data[next_row(data, row)][x]
-                        else:
-                            break
+                    find_part_num(data, gear, 5, next_row(data, row), col)
 
                 # You can't have the same number in all 3 positions
                 if gear[3] == gear[4] == gear[5]:
-                    gear[4] = 0
-                    gear[5] = 0
+                    gear[4] = ''
+                    gear[5] = ''
                 # You can't have the same number in down if you have either diagonal
                 elif gear[3] == gear[5] or gear[4] == gear[5]:
-                    gear[5] = 0
+                    gear[5] = ''
 
                 # left
-                num += 1
                 if data[row][prev_col(data, col)].isnumeric():
-                    gear[num] = ""
-                    for x in range(col-1,-1,-1):
-                        if data[row][x].isnumeric():
-                            gear[num] = data[row][x] + gear[num]
-                        else:
-                            break
+                    find_part_num(data, gear, 6, row, col-1, True, False)
 
-                # right                        
-                num += 1
+                # right
                 if data[row][next_col(data, col)].isnumeric():
-                    gear[num] = ""
-                    for x in range(col+1,len(data[row]),1):
-                        if data[row][x].isnumeric():
-                            gear[num] += data[row][x]
-                        else:
-                            break
+                    find_part_num(data, gear, 7, row, col, False, True)
 
                 # If you found 2 gears, create a gear ratio and add it to our sum of them
                 #print(f"gears: {gear}")
-                gears = 0
-                for g in gear:
-                    if g != 0:
-                        gears += 1
-                if gears == 2:
-                    gear_ratio = 1         
-                    gears = []
-                    for g in gear:
-                        if g != 0:
-                            gears.append(g)
-                            gear_ratio = gear_ratio * int(g)
+                # Convert our list of strings into a list of ints, converting null values to 0
+                gear_int = np.array([int(i) if i else 0 for i in gear], dtype=int)
+                # If we have 2 gears, multiply them together to get a gear ratio and add to the final answer
+                if np.count_nonzero(gear_int) == 2:
+                    # Multiply all non-zero gears together
+                    gear_ratio = np.prod(gear_int[gear_int != 0])
                     sum_of_gear_ratios += gear_ratio
-                    #print(f"row {row} found gears {gears} gear_ratio: {gear_ratio}")
+                    #print(f"row {row} found gears {gear_int} gear_ratio: {gear_ratio}")
 
     print(f"sum_of_gear_ratios: {sum_of_gear_ratios}")
     return sum_of_gear_ratios
