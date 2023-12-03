@@ -38,6 +38,9 @@ def parse_raw(raw: str):
 # Parse the game data
 data = parse_raw(raw)
 
+# In this schematic, two numbers are not part numbers because they are not adjacent to a symbol:
+# 114 (top right) and 58 (middle right). Every other number is adjacent to a symbol and so is a part number; their sum is 4361.
+# Of course, the actual engine schematic is much larger. What is the sum of all of the part numbers in the engine schematic?
 def prev_row(data, row: int):
     if 0 <= row-1 < len(data):
         return row-1
@@ -58,9 +61,6 @@ def next_col(data, col: int):
         return col+1
     return col
 
-# In this schematic, two numbers are not part numbers because they are not adjacent to a symbol:
-# 114 (top right) and 58 (middle right). Every other number is adjacent to a symbol and so is a part number; their sum is 4361.
-# Of course, the actual engine schematic is much larger. What is the sum of all of the part numbers in the engine schematic?
 def part_one(data=data):
     sum_of_part_numbers = 0
     for row,line in enumerate(data):
@@ -96,6 +96,12 @@ def part_one(data=data):
     print(f"sum_of_part_numbers: {sum_of_part_numbers}")
     return sum_of_part_numbers
 
+# This time, you need to find the gear ratio of every gear and add them all up so that the engineer can figure out which gear needs to be replaced.
+# In this schematic, there are two gears. The first is in the top left; it has part numbers 467 and 35, so its gear ratio is 16345.
+# The second gear is in the lower right; its gear ratio is 451490. (The * adjacent to 617 is not a gear because it is only adjacent to one part number.)
+# Adding up all of the gear ratios produces 467835.
+# What is the sum of all of the gear ratios in your engine schematic?
+
 def find_part_num(data, gear, num, row, col, left=True, right=True):
     # Go left
     if left:
@@ -112,11 +118,6 @@ def find_part_num(data, gear, num, row, col, left=True, right=True):
             else:
                 break
 
-# This time, you need to find the gear ratio of every gear and add them all up so that the engineer can figure out which gear needs to be replaced.
-# In this schematic, there are two gears. The first is in the top left; it has part numbers 467 and 35, so its gear ratio is 16345.
-# The second gear is in the lower right; its gear ratio is 451490. (The * adjacent to 617 is not a gear because it is only adjacent to one part number.)
-# Adding up all of the gear ratios produces 467835.
-# What is the sum of all of the gear ratios in your engine schematic?
 def part_two(data=data):
     sum_of_gear_ratios = 0
     for row,line in enumerate(data):
