@@ -75,8 +75,9 @@ def part_two(data=data):
     for card_num, card in enumerate(data):
         process_card(data, card_num, cards_won, card_matches)
     for card_num, card in enumerate(cards_won):
-        for x in range(card_num+1, card_num+card_matches[card_num]+1):
-            cards_won[x] += cards_won[card_num]
+        for copy_num in range(card_num+1, card_num+card_matches[card_num]+1):
+            # Increment the number of copies of each card won by the number of the current card we are on
+            cards_won[copy_num] += cards_won[card_num]
     print(f"num_cards_won: {sum(cards_won)}")
     return sum(cards_won)
 
