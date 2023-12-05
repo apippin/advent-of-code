@@ -98,14 +98,7 @@ def valid_seed(data, seed):
     return False
 
 def part_two(data=data):
-    max_location = 0
-    # Find our maximum location
-    for m in data["humidity-to-location"]:
-        #print(f"Processing locations: {m}")
-        location = m[0] + m[2]
-        if location > max_location:
-            max_location = location
-    print(f"max_locations: {max_location}")
+    max_location = sys.maxsize
     # Starting at the lowest possible location until the highest location,
     # search backwards through the mapping from a location back to a seed.
     # Check if that seed is valid. If it is, by definition, we have our lowest location.
