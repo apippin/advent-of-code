@@ -78,6 +78,7 @@ def part_two(data=data):
         for copy_num in range(card_num+1, card_num+card_matches[card_num]+1):
             # Increment the number of copies of each card won by the number of the current card we are on
             cards_won[copy_num] += cards_won[card_num]
+    print(f"{cards_won}")
     print(f"num_cards_won: {sum(cards_won)}")
     return sum(cards_won)
 
