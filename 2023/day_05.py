@@ -69,21 +69,54 @@ def part_one(data=data):
 
 # Consider all of the initial seed numbers listed in the ranges on the first line of the almanac.
 # What is the lowest location number that corresponds to any of the initial seed numbers?
-def part_two(data=data):
-    min_location = sys.maxsize
-    # Convert our list of seeds into a list of tuples of (seed, range)
+def get_src(data, name, dst):
+    for m in data[name]:
+        if(dst >= m[0] and dst < m[0] + m[2]):
+            src = m[1] + (dst - m[0])
+            #print(f"src:{src} dst:{dst}")
+            return src
+    return dst
+
+def get_seed(data, location):
+    humidity = get_src(data, "humidity-to-location", location)
+    temperature = get_src(data, "temperature-to-humidity", humidity)
+    light = get_src(data, "light-to-temperature", temperature)
+    water = get_src(data, "water-to-light", light)
+    fertilizer = get_src(data, "fertilizer-to-water", water)
+    soil = get_src(data, "soil-to-fertilizer", fertilizer)
+    seed = get_src(data, "seed-to-soil", soil)
+    return seed
+
+def valid_seed(data, seed):
     ranges = iter(data["seeds"])
     seed_ranges = [*zip(ranges, ranges)]
     #print(f"Seed ranges: {seed_ranges}")
     # For each seed in the range of seeds, get their locations
     for seed_range in seed_ranges:
-        print(f"Processing seed range: {seed_range}")
-        for seed in range(seed_range[0], seed_range[0]+seed_range[1],10):
-            location = get_location(data, seed)
-            if location < min_location:
-                min_location = location
-    print(f"min location: {min_location}")
-    return min_location
+        if seed >= seed_range[0] and seed < seed_range[0] + seed_range[1]:
+            return True
+    return False
+
+def part_two(data=data):
+    max_location = 0
+    # Find our maximum location
+    for m in data["humidity-to-location"]:
+        #print(f"Processing locations: {m}")
+        location = m[0] + m[2]
+        if location > max_location:
+            max_location = location
+    print(f"max_locations: {max_location}")
+    # Starting at the lowest possible location until the highest location,
+    # search backwards through the mapping from a location back to a seed.
+    # Check if that seed is valid. If it is, by definition, we have our lowest location.
+    # Since there are way fewer locations than seeds, this will run much faster.
+    for location in range(0, max_location):
+        seed = get_seed(data, location)
+        if valid_seed(data, seed):
+            print(f"seed: {seed} location: {location}")
+            break
+    print(f"min location: {location}")
+    return location
 
 # Check that the test data then full data works for part_one
 aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_one)
