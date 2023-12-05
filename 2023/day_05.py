@@ -99,13 +99,18 @@ def valid_seed(data, seed):
 
 def part_two(data=data):
     max_location = sys.maxsize
-    # Starting at the lowest possible location until the highest location,
+    # We can't use the approach from part1 because it would take 4-6 hours with this dataset.
+    # So brute force would work using part1 solution, but would take too long.
+    # Therefore, we have to use a different approach that would run faster.
+    # Let's start at the lowest possible location until the highest location,
     # search backwards through the mapping from a location back to a seed.
     # Check if that seed is valid. If it is, by definition, we have our lowest location.
     # Since there are way fewer locations than seeds, this will run much faster.
     for location in range(0, max_location):
         seed = get_seed(data, location)
         if valid_seed(data, seed):
+            # The first valid seed we find, by definition, will have the lowest location
+            # as we are searching for locations from 0 ... MAXINT
             print(f"seed: {seed} location: {location}")
             break
     print(f"min location: {location}")
