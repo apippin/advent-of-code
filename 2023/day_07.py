@@ -3,15 +3,13 @@ from typing import TYPE_CHECKING
 import aoc_helper
 
 import re
-import operator
-from functools import reduce
 
 # What day and year is this solution for?
 day = 7
 year = 2023
 
 # Game globals
-...
+part_two_flag = False
 
 # Sample game data:
 # 32T3K 765
@@ -20,9 +18,8 @@ year = 2023
 # KTJJT 220
 # QQQJA 483
 raw = aoc_helper.fetch(day, year)
-
-def matching_cards(dict, search):
-    return [card for card, num in dict.items() if num == search]
+def matching_cards(dict, search, exclude=()):
+    return [card for card, num in dict.items() if (num == search) and (not part_two_flag or card != 'J') and (card not in exclude)]
 
 def hand_type(cards, part_two=False):
     # Calculate the type of the hand:
@@ -42,8 +39,8 @@ def hand_type(cards, part_two=False):
         return 7
     elif matching_cards(cards, 4-jokers):
         return 6
-    elif ((matching_cards(cards, 2-jokers) and matching_cards(cards,3)) or
-          (matching_cards(cards, 2) and matching_cards(cards,3-jokers))):
+    elif ((matching_cards(cards, 3) and matching_cards(cards, 2-jokers, matching_cards(cards, 3)[0])) or
+          (matching_cards(cards, 2) and matching_cards(cards, 3-jokers, matching_cards(cards, 2)[0]))):
         return 5
     elif matching_cards(cards, 3-jokers):
         return 4
@@ -53,6 +50,7 @@ def hand_type(cards, part_two=False):
         return 2
     elif matching_cards(cards, 1):
         return 1
+    return 0
 
 def strength_of_cards(hand, part_two=False):
     strengths = list()
@@ -77,20 +75,16 @@ def strength_of_cards(hand, part_two=False):
     return strengths
 
 def parse_raw(raw: str):
-    part_two = True # Manually change to False for part_one, True for part_two
     lines = raw.splitlines()
     data = list()
     for line in lines:
-        cards = dict()
+        cards = defaultdict(lambda: 0)
         tokens = line.split(" ")
         hand = tokens[0]
         bid = int(tokens[1])
         for i, c in enumerate(hand):
-            if c not in cards:
-                cards[c] = 1
-            else:
-                cards[c] += 1
-        data.append((hand, bid, hand_type(cards, part_two), strength_of_cards(hand, part_two)))
+            cards[c] += 1
+        data.append((hand, bid, hand_type(cards, part_two_flag), strength_of_cards(hand, part_two_flag)))
     return data
 
 # Parse the game data
@@ -103,11 +97,10 @@ data = parse_raw(raw)
 def part_one(data=data):
     #print(f"{data}")
     sorted_hands = sorted(data, key=lambda x: (x[2], (x[3][0], x[3][1], x[3][2], x[3][3], x[3][4])), reverse=True)
-    print(f"{sorted_hands}")
+    #print(f"{sorted_hands}")
     winnings = 0
     max_hands = len(sorted_hands)
     for i, hand in enumerate(sorted_hands):
-        print(f"rank: {max_hands -i}")
         winnings += (max_hands - i) * hand[1]
     print(f"total winnings: {winnings}")
     return winnings
@@ -123,5 +116,7 @@ aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_one)
 aoc_helper.lazy_submit(day=day, year=year, solution=part_one, data=data)
 
 # Check that the test data then full data works for part_two
+part_two_flag = True
+data = parse_raw(raw)
 aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_two)
 aoc_helper.lazy_submit(day=day, year=year, solution=part_two, data=data)
