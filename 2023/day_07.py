@@ -22,34 +22,36 @@ def matching_cards(dict, search, exclude=()):
     return [card for card, num in dict.items() if (num == search) and (not part_two_flag or card != 'J') and (card not in exclude)]
 
 def hand_type(cards, part_two=False):
-    # Calculate the type of the hand:
-    # Five of a kind = 7
-    # Four of a kind = 6
-    # Full House = 5
-    # Three of a kind = 4
-    # Two pair = 3
-    # One pair = 2
-    # High card = 1
+    # Look up how many Jokers we have in our hand
     if part_two and 'J' in cards:
         jokers = cards['J']
     else:
         jokers = 0
-    #print(f"cards: {cards} jokers: {jokers}")
+
+    # Calculate the type of the hand:
+    # Five of a kind = 7
     if matching_cards(cards, 5-jokers) or jokers == 5:
         return 7
+    # Four of a kind = 6
     elif matching_cards(cards, 4-jokers):
         return 6
+    # Full House = 5
     elif ((matching_cards(cards, 3) and matching_cards(cards, 2-jokers, matching_cards(cards, 3)[0])) or
           (matching_cards(cards, 2) and matching_cards(cards, 3-jokers, matching_cards(cards, 2)[0]))):
         return 5
+    # Three of a kind = 4
     elif matching_cards(cards, 3-jokers):
         return 4
+    # Two pair = 3# Two pair = 3
     elif (len(matching_cards(cards, 2)) == 2) or ((len(matching_cards(cards, 2)) == 1) and jokers and matching_cards(cards, 1)):
         return 3
+    # One pair = 2
     elif (len(matching_cards(cards, 2)) == 1) or (jokers and matching_cards(cards, 1)):
         return 2
+    # High card = 1
     elif matching_cards(cards, 1):
         return 1
+    # Unexpected casse
     return 0
 
 def strength_of_cards(hand, part_two=False):
