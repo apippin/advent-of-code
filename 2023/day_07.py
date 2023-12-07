@@ -54,7 +54,7 @@ def hand_type(cards, part_two=False):
 
 def strength_of_cards(hand, part_two=False):
     strengths = list()
-    for i,card in enumerate(hand):
+    for card in hand:
         if card.isnumeric():
             strengths.append(int(card))
         else:
@@ -82,7 +82,7 @@ def parse_raw(raw: str):
         tokens = line.split(" ")
         hand = tokens[0]
         bid = int(tokens[1])
-        for i, c in enumerate(hand):
+        for c in hand:
             cards[c] += 1
         data.append((hand, bid, hand_type(cards, part_two_flag), strength_of_cards(hand, part_two_flag)))
     return data
@@ -96,17 +96,16 @@ data = parse_raw(raw)
 # Find the rank of every hand in your set. What are the total winnings?
 def part_one(data=data):
     #print(f"{data}")
-    sorted_hands = sorted(data, key=lambda x: (x[2], (x[3][0], x[3][1], x[3][2], x[3][3], x[3][4])), reverse=True)
+    sorted_hands = sorted(data, key=lambda x: (x[2], x[3]), reverse=True)
     #print(f"{sorted_hands}")
     winnings = 0
     max_hands = len(sorted_hands)
-    for i, hand in enumerate(sorted_hands):
-        winnings += (max_hands - i) * hand[1]
+    winnings = sum((max_hands - i)*hand[1] for i,hand in enumerate(sorted_hands))
     print(f"total winnings: {winnings}")
     return winnings
 
-# Using the new joker rule, find the rank of every hand in your set.
-# What are the new total winnings?
+# Using the new joker rule, where J are no longer Jacks, but Jokers (wilds).
+# Find the rank of every hand in your set. What are the new total winnings?
 def part_two(data=data):
     winnings = part_one(data)
     return winnings
@@ -117,6 +116,6 @@ aoc_helper.lazy_submit(day=day, year=year, solution=part_one, data=data)
 
 # Check that the test data then full data works for part_two
 part_two_flag = True
-data = parse_raw(raw)
+data = parse_raw(raw) # reparse the data in joker card variant mode
 aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_two)
 aoc_helper.lazy_submit(day=day, year=year, solution=part_two, data=data)
