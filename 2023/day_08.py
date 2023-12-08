@@ -67,8 +67,10 @@ def part_two(data=data):
     starting_nodes = [x for x in data.keys() if x.endswith('A')]
     #print(f"{starting_nodes}")
     # Paths are cyclic so navigating them all together takes a really long time (mine never finished).
-    # So let's do this mathematically by first finding the steps per path to each end node, and then taking the LCM of those.
-    # The LCM will be the number of steps for each path to get to an end node, because it is the least common mulitple of each path length.
+    # So let's do this mathematically by first finding the steps per path to each end node. I noticed the steps for each path
+    # individually were multiples of each other (which makes sense). I then realized that taking the LCM of those path lengths would yield the answer.
+    # The LCM will be the number of steps for each path to get to an end node, because it is the least common mulitple of each path length, and
+    # they are multiples of each other, the LCM will be the lowest number of steps for each path to reach their end.
     # The LCM is the lowest number that is a multiple of each path's steps to get to a node ending in Z.
     lcms = [path_finder(data, node) for node in starting_nodes]
     num_steps = lcm(*lcms)
