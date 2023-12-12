@@ -1,6 +1,6 @@
 advent-of-code-data==2.0.1
 advent-of-code-helpers==0.1.1
-aoc-helper==1.8.12
+aoc-helper==1.8.17
 aocd==0.1
 aocd-example-parser==2023.2
 beautifulsoup4==4.12.2
