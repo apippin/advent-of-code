@@ -42,6 +42,7 @@ def parse_raw(raw: str):
 # Parse the game data
 data = parse_raw(raw)
 
+# This is a Dynamic Programming problem!
 # For a given data record and groups, determine if it satisfies the group
 # r = position within the record
 # g = position within the groups
@@ -55,20 +56,33 @@ def find_arrangements(record, r, g, l):
         return arrangement_dict[key]
     # If we have reached the end of our record string, check if we found an arrangement
     if r == len(record[0]):
+        # If we have reached the end of our groups list, and we are not in a current group, we have found an arrangement
         if g == len(record[1]) and l == 0:
             return 1
+        # If we are on the next to last group and it is a group of 1, we have found an arrangement
         elif g == len(record[1])-1 and record[1][g] == l:
             return 1
+        # We have not found an arrangement
         else:
             return 0
+    # Count up the number of arrangements we found in this record
     arrangement = 0
+    # We need to cycle through each value for each string position
     for c in ['.', '#']:
+        # If our current record position equals the given character or a '?'
         if record[0][r] == c or record[0][r] == '?':
+            # If the current record position is operational and we are not yet in a group
             if c == '.' and l == 0:
+                # See if the next record position match an arrangement
                 arrangement += find_arrangements(record, r+1, g, 0)
+            # If the character we are testing is operational, and we are in a group, and our group isn't the last one,
+            # and the group has 1 damaged record in it
             elif c == '.' and l > 0 and g < len(record[1]) and record[1][g] == l:
+                # See if the next record and next group still match an arrangement
                 arrangement += find_arrangements(record, r+1, g+1, 0)
+            # If the character we are testing is damaged
             elif c == '#':
+                # See if the next record, next group, and next item in our current group match an arrangement
                 arrangement += find_arrangements(record, r+1, g, l+1)
     arrangement_dict[key] = arrangement
     return arrangement
@@ -96,8 +110,8 @@ def part_two(data=data):
         #print(f"{record}")
         arrangement_dict = {}
         # unfold the record
-        record[0] = '?'.join([record[0], record[0], record[0], record[0], record[0]])
-        record[1] = record[1] + record[1] + record[1] + record[1] + record[1]
+        record[0] = '?'.join((record[0],) * 5)
+        record[1] = record[1] * 5
         #print(f"{record}")
         arrangements = find_arrangements(record, 0, 0, 0)
         #print(f"arrangements: {arrangements}")
