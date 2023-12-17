@@ -149,28 +149,28 @@ def part_two(data=data):
                 energized.append(follow_beam(data, (x,y,1,0))) # right
                 energized.append(follow_beam(data, (x,y,0,1))) # down
             # top right corner
-            if x == len(data[0])-1 and y == 0:
+            elif x == len(data[0])-1 and y == 0:
                 energized.append(follow_beam(data, (x,y,-1,0))) # left
                 energized.append(follow_beam(data, (x,y,0,1))) # down
             # bottom right corner
-            if x == len(data[0])-1 and y == len(data)-1:
+            elif x == len(data[0])-1 and y == len(data)-1:
                 energized.append(follow_beam(data, (x,y,-1,0))) # left
                 energized.append(follow_beam(data, (x,y,0,-1))) # up
             # bottom left corner
-            if x == 0 and y == len(data)-1:
+            elif x == 0 and y == len(data)-1:
                 energized.append(follow_beam(data, (x,y,1,0))) # right
                 energized.append(follow_beam(data, (x,y,0,-1))) # up
             # top edge
-            if y == 0:
+            elif y == 0:
                 energized.append(follow_beam(data, (x,y,0,1))) # down
             # right edge
-            if x == len(data[0])-1:
+            elif x == len(data[0])-1:
                 energized.append(follow_beam(data, (x,y,-1,0))) # left
             # bottom edge
-            if y == len(data)-1:
+            elif y == len(data)-1:
                 energized.append(follow_beam(data, (x,y,0,-1))) # up
             # left edge
-            if x == 0:
+            elif x == 0:
                 energized.append(follow_beam(data, (x,y,1,0))) # right
 
     print(f"num_energized: {max(energized)}")
