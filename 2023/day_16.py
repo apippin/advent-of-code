@@ -177,8 +177,8 @@ def part_two(data=data):
     return max(energized)
 
 # Check that the test data then full data works for part_one
-#aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_one)
-#aoc_helper.lazy_submit(day=day, year=year, solution=part_one, data=data)
+aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_one)
+aoc_helper.lazy_submit(day=day, year=year, solution=part_one, data=data)
 
 # Check that the test data then full data works for part_two
 aoc_helper.lazy_test(day=day, year=year, parse=parse_raw, solution=part_two)
