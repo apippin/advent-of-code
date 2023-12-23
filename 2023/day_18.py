@@ -74,15 +74,11 @@ def shoelace(x_y):
     return area
 
 def dig(data):
-    # We will store our dig site as a list of list (defaultlist to autofill missing points with 0)
-    dig_site = defaultlist(lambda:defaultlist(int))
     # We need to store the vertices to give to the shoelace alogorithm to calculate the linear area
-    vertices = []
-    # Dig our starting position in the middle of an area big enough to hold the entire dig plan
-    x = 1000
-    y = 1000
-    vertices.append((x,y))
+    x = 0
+    y = 0
     perim = 0
+    vertices = [(x,y)]
     # Dig all the other positions based on our dig plan
     for dig_plan in data:
         dist = int(dig_plan[1])-1
@@ -102,12 +98,11 @@ def dig(data):
             dx = dig_plan[0][1] - dist
             x += dx
             perim += abs(dx)
-        #print(f"dug: ({y},{x})")
         vertices.append((x,y))
     #print(*vertices, sep='\n')
     #print(f"perim: {perim}")
     # The shoelace returns the linear area (not including the perimeter line)
-    # So we need to add in the perimeter (divided by 2) + 1 full rotation
+    # So we need to add in the perimeter (divided by 2) + 1 (0.5 * 4 extra external corners)
     return(int(shoelace(vertices)) + (perim//2) + 1)
 
 # The Elves are concerned the lagoon won't be large enough;
